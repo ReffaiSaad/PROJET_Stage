@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* pour gérer la mise en forme des listes, titres, etc. */
+.message-bubble ul {
+  list-style-type: disc;
+  margin-left: 1rem;
+}
+.message-bubble ol {
+  list-style-type: decimal;
+  margin-left: 1rem;
+}
+.message-bubble strong {
+  font-weight: bold;
+}
+.message-bubble em {
+  font-style: italic;
+}
+.message-bubble p {
+  margin-bottom: 0.5rem;
+}
