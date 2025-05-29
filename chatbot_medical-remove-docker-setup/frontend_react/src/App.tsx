@@ -4,8 +4,8 @@ import ChatInterface from './components/ChatInterface';
 
 function App() {
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4 md:p-8">
-      <div className="w-full max-w-4xl h-[80vh]">
+    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-2">
+      <div className="w-full max-w-6xl">
         <ChatProvider>
           <ChatInterface />
         </ChatProvider>

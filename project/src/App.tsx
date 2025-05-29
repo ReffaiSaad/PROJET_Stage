@@ -13,6 +13,7 @@ import SymptomsPage from './pages/SymptomsPage';
 import ChatbotPage from './pages/ChatbotPage';
 import HistoryPage from './pages/HistoryPage';
 import FAQPage from './pages/FAQPage';
+import ChatWidget from './components/ChatWidget';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -35,25 +36,37 @@ const AnimatedRoutes = () => {
   );
 };
 
+const AppContent = () => {
+  const location = useLocation();
+  const isChatbotPage = location.pathname === '/chatbot';
+
+  return (
+    <div className={`flex flex-col min-h-screen bg-gradient-to-br from-blue-50 to-white ${isChatbotPage ? 'h-screen' : ''}`}>
+      {/* Navbar toujours visible */}
+      <Navbar />
+
+      {/* Contenu principal */}
+      <main className={`flex-grow ${isChatbotPage ? 'h-full' : ''}`}>
+        <AnimatedRoutes />
+      </main>
+
+      {/* Footer caché sur la page chatbot */}
+      {!isChatbotPage && <Footer />}
+
+      {/* Chatbot flottant visible partout */}
+      <ChatWidget />
+
+      {/* Notifications Toast */}
+      <Toaster position="top-right" />
+    </div>
+  );
+};
+
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 to-white">
-          {/* Barre de navigation */}
-          <Navbar />
-
-          {/* Contenu principal */}
-          <main className="flex-grow">
-            <AnimatedRoutes />
-          </main>
-
-          {/* Pied de page */}
-          <Footer />
-
-          {/* Notifications */}
-          <Toaster position="top-right" />
-        </div>
+        <AppContent />
       </Router>
     </AuthProvider>
   );

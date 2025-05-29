@@ -5,6 +5,7 @@ from typing import List
 import joblib
 import os
 import numpy as np
+import pandas as pd
 
 # Initialisation de l'application FastAPI
 app = FastAPI(title="Symptom Analysis API")
@@ -28,6 +29,9 @@ try:
 except FileNotFoundError as e:
     print(f"Erreur : {e}")
     raise RuntimeError("Un ou plusieurs fichiers de modèle sont introuvables. Vérifiez le répertoire 'models/'.")
+except Exception as e:
+    print(f"Erreur inattendue lors du chargement des modèles : {e}")
+    raise RuntimeError("Une erreur inattendue s'est produite lors du chargement des modèles.")
 
 # Schéma pour la requête
 class SymptomsRequest(BaseModel):
@@ -40,18 +44,23 @@ class DiseasePrediction(BaseModel):
 
 @app.post("/predict", response_model=List[DiseasePrediction])
 def predict(req: SymptomsRequest):
+    """
+    Prend une liste d'IDs de symptômes et retourne une liste de maladies avec leurs probabilités.
+    """
     # Créer un vecteur de longueur fixe (18) avec des valeurs par défaut de 0
     X = [0] * 18
     for symptom_id in req.symptoms:
         if 1 <= symptom_id <= 18:  # Vérifiez que l'ID du symptôme est valide
-            X[symptom_id - 1] = 1
+            X[symptom_id - 1] = 1  # Marquer les symptômes présents
 
-    X = np.array([X])  # Convertir en tableau numpy
+    # Convertir en DataFrame Pandas avec les noms de colonnes
+    feature_names = [f"symptom_{i+1}" for i in range(18)]  # Noms des colonnes utilisés lors de l'entraînement
+    X_df = pd.DataFrame([X], columns=feature_names)
 
     try:
         # Prédictions des probabilités avec les deux modèles
-        p1 = logreg.predict_proba(X)[0]
-        p2 = rf.predict_proba(X)[0]
+        p1 = logreg.predict_proba(X_df)[0]
+        p2 = rf.predict_proba(X_df)[0]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur lors de la prédiction : {str(e)}")
 
